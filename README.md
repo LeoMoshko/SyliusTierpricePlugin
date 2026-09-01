@@ -1,77 +1,93 @@
-<p align="center"><a href="https://sylius.com/plugins/" target="_blank"><img src="https://sylius.com/assets/badge-approved-by-sylius.png" width="100"></a></p>
+
+
 
 # Sylius Tier Price Plugin
-[![Build Status](https://travis-ci.org/Brille24/SyliusTierpricePlugin.svg?branch=master)](https://travis-ci.org/Brille24/SyliusTierpricePlugin)
 
-This plugin adds tier pricing to Sylius one product has different prices based on the quantity.
+This plugin adds tier pricing to Sylius: one product variant can have different prices based on the ordered quantity.
+
+> This is a fork of [`brille24/sylius-tierprice-plugin`](https://github.com/Brille24/SyliusTierpricePlugin),
+> published as `leomoshko/sylius-tierprice-plugin`. The PHP namespace (`Brille24\SyliusTierPricePlugin\`)
+> and the bundle class name are kept unchanged so it stays a drop-in replacement.
+
+## Requirements
+
+| Package | Version         |
+|---------|-----------------|
+| PHP     | ^8.2            |
+| Sylius  | 2.0, 2.1, 2.2   |
 
 ## Installation
-* Install the bundle via composer `composer require brille24/sylius-tierprice-plugin`
-* Register the bundle in your `bundles.php`:
+
+* Install the plugin via composer:
+```bash
+composer require leomoshko/sylius-tierprice-plugin
+```
+
+* Register the bundle in your `config/bundles.php`:
 ```php
 return [
-    //...
-
+    // ...
     Brille24\SyliusTierPricePlugin\Brille24SyliusTierPricePlugin::class => ['all' => true],
 ];
 ```
 
-* Add the `config.yaml` to your local `config/config.yaml`
-```yml
+* Import the plugin config in your `config/packages/brille24_sylius_tierprice_plugin.yaml`:
+```yaml
 imports:
-    ...
-    - { resource: '@Brille24SyliusTierPricePlugin/config/config.yaml'}
+    - { resource: '@Brille24SyliusTierPricePlugin/config/config.yaml' }
 ```
 
-* For API functionality add the bundle's `routes.yml` to the local `app/config/routes.yml`
-```yml
-...
+* For API functionality import the plugin routes in your `config/routes.yaml`:
+```yaml
 brille24_tierprice_bundle:
     resource: '@Brille24SyliusTierPricePlugin/config/routes.yml'
 ```
 
-* Go into your `ProductVariant` class and add the following trait and add one method call to the constructor
+* Go into your `ProductVariant` class, implement the interface and add the trait plus one call in the constructor:
 ```php
-class ProductVariant extends BaseProductVariant implements \Brille24\SyliusTierPricePlugin\Entity\ProductVariantInterface
-{
-    use \Brille24\SyliusTierPricePlugin\Traits\TierPriceableTrait;
+use Brille24\SyliusTierPricePlugin\Entity\ProductVariantInterface as TierPriceableProductVariantInterface;
+use Brille24\SyliusTierPricePlugin\Traits\TierPriceableTrait;
+use Sylius\Component\Core\Model\ProductVariant as BaseProductVariant;
 
-    public function __construct() {
+class ProductVariant extends BaseProductVariant implements TierPriceableProductVariantInterface
+{
+    use TierPriceableTrait;
+
+    public function __construct()
+    {
         parent::__construct(); // Your constructor here
 
         $this->initTierPriceableTrait(); // "Constructor" of the trait
     }
-
-    protected function createTranslation(): ProductVariantTranslationInterface
-    {
-        return new ProductVariantTranslation();
-    }
 }
-````
+```
 
-* Finally update the database, install the assets and update the translations:
-```sh
-bin/console doctrine:schema:update --force
+* Finally update the database schema (generate and run a migration) and install the assets:
+```bash
+bin/console doctrine:migrations:diff
+bin/console doctrine:migrations:migrate
 bin/console assets:install
-bin/console translation:update <locale> --force
 ```
 
 ### Integration
-* This bundle decorates the `sylius.calculator.product_variant_price` service. If you wish to change that, you could register a [compiler pass](https://symfony.com/doc/current/service_container/compiler_passes.html).
-* This bundle decorates the `sylius.order_processing.order_prices_recalculator` service. If you wish to use your own order processor or change its priority, you could register a [compiler pass](https://symfony.com/doc/current/service_container/compiler_passes.html).
+
+* This plugin decorates the `sylius.calculator.product_variant_price` service. If you wish to change that, you could register a [compiler pass](https://symfony.com/doc/current/service_container/compiler_passes.html).
+* This plugin decorates the `sylius.order_processing.order_prices_recalculator` service. If you wish to use your own order processor or change its priority, you could register a [compiler pass](https://symfony.com/doc/current/service_container/compiler_passes.html).
+* The admin product-variant form and the shop product page are extended through [Sylius Twig Hooks](https://github.com/Sylius/TwigHooks) (`config/app/twig_hooks/`), not menu listeners.
 
 ## Usage
-First of all you have to set up a product with as many variants as you want. Then in each of these variants you can set the tier pricing based on the channels.
-The table automatically sorts itself to provide a better overview for all different tiers, you configured.
+
+First set up a product with as many variants as you want. Then, for each variant, you can configure tier pricing per channel (and optionally per customer group). The table sorts itself automatically to give a clear overview of the configured tiers.
 
 <img src="images/Backend.png" />
 
-In the frontend the user will see a nice looking table right next to the "add to cart" button that shows the discount for the different tiers like so:
+In the shop the customer sees a table next to the "add to cart" button showing the discount for the different tiers:
 
 <img src="images/Front-End.png" />
 
 ### Creating data
-You can easily create the tier prices with fixtures like that.
+
+You can create tier prices with fixtures:
 ```yaml
 sylius_fixtures:
     suites:
@@ -85,5 +101,33 @@ sylius_fixtures:
                               quantity: 10
                               price: 5
 ```
-For this the products need to be created first and the product variant must also exist.
+The referenced product and product variant have to exist before the fixture runs.
 
+## Upgrading from `brille24/sylius-tierprice-plugin`
+
+Because the namespace is unchanged, switching is a `composer.json` change only:
+```bash
+composer remove brille24/sylius-tierprice-plugin
+composer require leomoshko/sylius-tierprice-plugin
+```
+No code, config, template or translation-key changes are required.
+
+## Support
+
+Found a bug or need help wiring the plugin into your Sylius project? Please open an
+issue on the [issue tracker](https://github.com/LeoMoshko/SyliusTierpricePlugin/issues).
+
+For paid support, Sylius integration or custom development, get in touch through our
+partner [santv.fr](https://santv.fr).
+
+## Partners
+
+This fork is maintained with the support of:
+
+<a href="https://santv.fr" target="_blank"><img src="images/partners/santv.png" alt="santv.fr - la tech au service de la santé et du développement des enfants" width="320"></a>
+
+**[santv.fr](https://santv.fr)** — la tech au service de la santé et du développement des enfants.
+
+## License
+
+Released under the [MIT License](LICENSE).

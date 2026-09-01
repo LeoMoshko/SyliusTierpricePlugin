@@ -16,7 +16,7 @@ namespace Brille24\SyliusTierPricePlugin\Validator;
 use Brille24\SyliusTierPricePlugin\Entity\ProductVariantInterface;
 use Brille24\SyliusTierPricePlugin\Entity\TierPriceInterface;
 use function count;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use ReflectionProperty;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -81,9 +81,9 @@ class TierPriceUniqueValidator extends ConstraintValidator
      */
     private function areDuplicates(array $fields, ObjectManager $em, TierPriceInterface $first, TierPriceInterface $second): bool
     {
-        /** @var ClassMetadataInfo $class */
+        /** @var ClassMetadata<TierPriceInterface> $class */
         $class = $em->getClassMetadata($first::class);
-        Assert::isInstanceOf($class, ClassMetadataInfo::class);
+        Assert::isInstanceOf($class, ClassMetadata::class);
 
         foreach ($fields as $fieldName) {
             if (!$class->hasField($fieldName) && !$class->hasAssociation($fieldName)) {
@@ -107,9 +107,11 @@ class TierPriceUniqueValidator extends ConstraintValidator
     }
 
     /**
+     * @param ClassMetadata<TierPriceInterface> $class
+     *
      * @return mixed
      */
-    private function getFieldValue(ObjectManager $em, ClassMetadataInfo $class, string $fieldName, TierPriceInterface $value)
+    private function getFieldValue(ObjectManager $em, ClassMetadata $class, string $fieldName, TierPriceInterface $value)
     {
         /** @var ReflectionProperty $fieldMetaData */
         $fieldMetaData = $class->reflFields[$fieldName];
