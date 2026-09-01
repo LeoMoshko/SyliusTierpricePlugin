@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Brille24\SyliusTierPricePlugin;
 
+use Brille24\SyliusTierPricePlugin\DependencyInjection\Compiler\OverrideProductVariantFormComponentPass;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 final class Brille24SyliusTierPricePlugin extends Bundle
@@ -23,5 +25,12 @@ final class Brille24SyliusTierPricePlugin extends Bundle
     public function getPath(): string
     {
         return \dirname(__DIR__);
+    }
+
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new OverrideProductVariantFormComponentPass());
     }
 }
