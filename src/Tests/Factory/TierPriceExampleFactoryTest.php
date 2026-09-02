@@ -21,6 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Core\Model\ProductVariantInterface as SyliusProductVariantInterface;
 use Sylius\Component\Core\Repository\ProductVariantRepositoryInterface;
 
 class TierPriceExampleFactoryTest extends TestCase
@@ -28,10 +29,10 @@ class TierPriceExampleFactoryTest extends TestCase
     /** @var TierPriceExampleFactory */
     private $subject;
 
-    /** @var MockObject|ProductVariantRepositoryInterface */
+    /** @var ProductVariantRepositoryInterface<SyliusProductVariantInterface>&MockObject */
     private $productVariantRepository;
 
-    /** @var MockObject|ChannelRepositoryInterface */
+    /** @var ChannelRepositoryInterface<ChannelInterface>&MockObject */
     private $channelRepository;
 
     /** @var MockObject|TierPriceFactoryInterface */

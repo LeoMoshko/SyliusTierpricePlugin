@@ -12,6 +12,7 @@ behat:
 
 install:
 	composer install --no-interaction --no-scripts
+	php bin/patch_vendor.php
 
 backend:
 	tests/Application/bin/console sylius:install --no-interaction

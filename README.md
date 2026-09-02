@@ -1,6 +1,3 @@
-
-
-
 # Sylius Tier Price Plugin
 
 This plugin adds tier pricing to Sylius: one product variant can have different prices based on the ordered quantity.

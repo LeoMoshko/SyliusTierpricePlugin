@@ -16,6 +16,7 @@ namespace Brille24\SyliusTierPricePlugin\Entity;
 use Brille24\SyliusTierPricePlugin\Repository\TierPriceRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
@@ -28,9 +29,8 @@ use Sylius\Component\Customer\Model\CustomerGroupInterface;
 #[UniqueConstraint(name: 'no_duplicate_prices', columns: ['qty', 'channel_id', 'product_variant_id', 'customer_group_id'])]
 class TierPrice implements TierPriceInterface
 {
-    /** @var int */
-    #[Id, Column(type: 'integer')]
-    private $id;
+    #[Id, GeneratedValue, Column(type: 'integer')]
+    private ?int $id = null;
 
     #[ManyToOne(targetEntity: ChannelInterface::class)]
     private ?ChannelInterface $channel = null;

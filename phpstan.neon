@@ -1,3 +1,8 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-webmozart-assert/extension.neon
+
 parameters:
     level: max
     reportUnmatchedIgnoredErrors: false
@@ -17,3 +22,5 @@ parameters:
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'
         -
             identifier: missingType.iterableValue
+        # Symfony's Config tree-builder stubs type end() as nullable, breaking fluent chains.
+        - '/Cannot call method \w+\(\) on Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\|null\./'
