@@ -18,9 +18,11 @@ use Brille24\SyliusTierPricePlugin\Entity\TierPriceInterface;
 use function count;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
+use function is_object;
 use ReflectionProperty;
 use Sylius\Component\Product\Model\ProductInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
@@ -55,8 +57,9 @@ class TierPriceUniqueValidator extends ConstraintValidator
             );
         }
 
-        /** @psalm-suppress MixedMethodCall */
-        $formData = $this->context->getRoot()->getData();
+        $root = $this->context->getRoot();
+        Assert::isInstanceOf($root, FormInterface::class);
+        $formData = $root->getData();
         if ($formData instanceof ProductInterface && $formData->getVariants()->count() === 1) {
             $formData = $formData->getVariants()->first();
         }
@@ -119,7 +122,7 @@ class TierPriceUniqueValidator extends ConstraintValidator
         /** @psalm-suppress MixedAssignment $fieldValue */
         $fieldValue = $fieldMetaData->getValue($value);
 
-        if (null !== $fieldValue && $class->hasAssociation($fieldName)) {
+        if (is_object($fieldValue) && $class->hasAssociation($fieldName)) {
             /* Ensure the Proxy is initialized before using reflection to
              * read its identifiers. This is necessary because the wrapped
              * getter methods in the Proxy are being bypassed.

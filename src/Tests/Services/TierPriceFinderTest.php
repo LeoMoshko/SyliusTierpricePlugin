@@ -27,7 +27,7 @@ class TierPriceFinderTest extends TestCase
 
     private ChannelInterface $testChannel;
 
-    /** @var TierPriceRepositoryInterface|MockObject<TierPriceRepositoryInterface> */
+    /** @var TierPriceRepositoryInterface&MockObject */
     private $tierPriceRepo;
 
     public function setUp(): void

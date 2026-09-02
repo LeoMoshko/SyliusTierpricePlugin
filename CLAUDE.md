@@ -31,6 +31,8 @@ Everything runs against the test application in `tests/Application/` (a full Syl
 
 `make ci` = `init phpstan phpunit phpspec behat`. Behat needs a Symfony server on `127.0.0.1:8080` and Chrome on `9222` (see `.github/workflows/build.yml` for the exact invocation); it also needs `tests/Application` DB created and fixtures loaded.
 
+PHPStan runs at level max over `src/` (which includes the PHPUnit tests in `src/Tests/`). `phpstan/extension-installer` is disabled in `allow-plugins`, so extensions are wired explicitly through `includes:` in `phpstan.neon` — currently `phpstan-phpunit` (needed for `createMock()` to type as `T&MockObject`) and `phpstan-webmozart-assert`. `phpstan-doctrine` is required but not included.
+
 PHPUnit tests live in `src/Tests/` (not `tests/`), configured via `phpunit.xml.dist` bootstrapping `tests/Application/config/bootstrap.php`.
 
 ## Architecture

@@ -20,6 +20,7 @@ use Sylius\Bundle\CoreBundle\Fixture\Factory\AbstractExampleFactory;
 use Sylius\Bundle\CoreBundle\Fixture\OptionsResolver\LazyOption;
 use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Core\Model\ProductVariantInterface as SyliusProductVariantInterface;
 use Sylius\Component\Core\Repository\ProductVariantRepositoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -27,6 +28,10 @@ class TierPriceExampleFactory extends AbstractExampleFactory
 {
     private OptionsResolver $optionsResolver;
 
+    /**
+     * @param ProductVariantRepositoryInterface<SyliusProductVariantInterface> $productVariantRepository
+     * @param ChannelRepositoryInterface<ChannelInterface> $channelRepository
+     */
     public function __construct(
         private ProductVariantRepositoryInterface $productVariantRepository,
         private ChannelRepositoryInterface $channelRepository,
