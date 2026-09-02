@@ -25,6 +25,7 @@
     },
     "require-dev": {
         "behat/behat": "^3.16",
+        "cweagans/composer-patches": "^1.7",
         "dmore/behat-chrome-extension": "^1.4",
         "dmore/chrome-mink-driver": "^2.9",
         "friends-of-behat/mink": "^1.11",
@@ -60,6 +61,7 @@
             "php": "8.2.99"
         },
         "allow-plugins": {
+            "cweagans/composer-patches": true,
             "dealerdirect/phpcodesniffer-composer-installer": false,
             "php-http/discovery": false,
             "phpstan/extension-installer": false,
@@ -73,6 +75,11 @@
         },
         "symfony": {
             "require": "^6.4"
+        },
+        "patches": {
+            "symfony/type-info": {
+                "Catch invalid @template bounds (Loggable|object) during cache warmup": "patches/symfony-type-info-catch-invalid-template-bound.patch"
+            }
         }
     },
     "autoload": {
